@@ -28,7 +28,7 @@
 | BATT_CURR_CH - current sensor (charger > battery) | AIN2 | A1 |
 | BATT_CURR_DIS - current sensor (battery > lighting) | -- | A2 |
 | BATT_HYDR - hydrogen sensor (batt soh monitor) | AIN3 | A3 |
-| --- | DIN1 | --- | 
-| --- | DIN2 | --- |
-| --- | DIN3 | --- |
+| MAINS_MONITOR | DIN1 | 9 | 
+| LIGHT_SW - turns lights on/off | DIN2 | 10 |
+| BATT_TEMP | DIN3 | 11 |
 
