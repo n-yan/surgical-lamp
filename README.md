@@ -19,6 +19,7 @@
 ## PIN MAPPINGS
 | Description | Overview pin | Arduino pin |
 | ------------- | ------------- | -------------- |
+| POW_CONTROL - controls where lamp pulls power | DO1 | 10 |
 | RED20 – red LED (batt indicator)  | DO4 | 4 |
 | GREEN40 – green LED (batt indicator)  | DO5 | 5 | 
 | GREEN60 – green LED (batt indicator) | DO6  | 6 | 
@@ -28,7 +29,10 @@
 | BATT_CURR_CH - current sensor (charger > battery) | AIN2 | A1 |
 | BATT_CURR_DIS - current sensor (battery > lighting) | -- | A2 |
 | BATT_HYDR - hydrogen sensor (batt soh monitor) | AIN3 | A3 |
-| MAINS_MONITOR | DIN1 | 9 | 
-| LIGHT_SW - turns lights on/off | DIN2 | 10 |
-| BATT_TEMP | DIN3 | 11 |
+| MAINS_MONITOR - monitors mains voltage | DIN1 | 2 | <-- uses pin 2 for hardware interrupt
+| LIGHT_SW - turns lights on/off | DIN2 | 3 | <-- uses pin 3 for hardware interrupt
+| BATT_TEMP | DIN3 | 9 |
+
+May add an output pin for controlling the lamp.
+May add input and output pins for an extra relay (kill switch for battery)
 
