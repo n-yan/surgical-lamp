@@ -13,3 +13,17 @@ double charge_soc_estim_eq(double dod_prev, double current, int delta_t, double 
   
   return soc;
 }
+
+void find_soc() {
+  switch(charge_state) {
+    case INIT:
+      // TODO: put in ryan code 
+      break;
+    case DISCHARGE:
+      soc = disch_calc_soc(voltage, a, b, c);
+      break;
+    case CHARGE:
+      soc = charge_soc_estim_eq(dod_prev, current, delta_t, cap); //define delta_t
+      break;
+  }
+}

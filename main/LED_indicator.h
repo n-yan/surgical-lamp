@@ -1,6 +1,6 @@
 // LED level indicates the battery level
 // 3 green LED, 1 red LED
-void LED_indicator(double SOC, int RED20, int GREEN40, int GREEN60, int GREEN80) {
+void LED_indicator() {
   // assume all states have an initial state of 0
   if (SOC > 0.8) {
     digitalWrite(GREEN40, HIGH);

@@ -1,8 +1,27 @@
 #include "LED_indicator.h"
 #include "find_soc.h"
 #include "control_charge.h"
+#include "power_interrupts.h"
+
+//STATE DECLARATIONS
+bool mains_on, lights_on;
+
+struct fault_states{
+  bool no_fault;
+  bool overheat;
+  bool hydrogen;
+  bool overcurrent;
+} fault_state;
+
+enum charge_states{
+  INIT, 
+  CHARGE, 
+  DISCHARGE
+} charge_state;
 
 //PIN SETUP
+#define POW_CONTROL 10
+
 #define RED20 4
 #define GREEN40 5
 #define GREEN60 6
@@ -14,17 +33,16 @@
 #define BATT_CURR_DIS A2
 #define BATT_HYDR A3
 
-//variables
+#define MAINS_MONITOR 2 //able to use hw interrupt
+#define LIGHT_SW 3 //able to use hw interrupt
+#define BATT_TEMP 9
+
+//SENSOR VARIABLE DECLARATIONS
 double voltage, current;
 
-//CHARGE STATE
-enum charge_state{
-  INIT, 
-  CHARGE, 
-  DISCHARGE
-} ch_state;
-
 void setup() {
+  pinMode(POW_CONTROL, OUTPUT);
+  
   pinMode(RED20, OUTPUT);
   pinMode(GREEN40, OUTPUT);
   pinMode(GREEN60, OUTPUT);
@@ -36,6 +54,21 @@ void setup() {
   pinMode(BATT_CURR_DIS, INPUT);
   pinMode(BATT_HYDR, INPUT);
 
+  pinMode(MAINS_MONITOR, INPUT);
+  attachInterrupt(digitalPinToInterrupt(MAINS_MONITOR), mains_off, FALLING);
+  attachInterrupt(digitalPinToInterrupt(MAINS_MONITOR), mains_on, RISING);
+  
+  pinMode(LIGHT_SW, INPUT);
+  attachInterrupt(digitalPinToInterrupt(LIGHT_SW), lamp_toggle, CHANGE); //assuming toggle switch. change to RISING/FALLING if push button
+  
+  pinMode(BATT_TEMP, INPUT);
+
+  //initialise
+
+  //check mains
+  //set light off
+  //check faults
+  
 }
 
 void loop() {
@@ -43,24 +76,13 @@ void loop() {
   voltage = analogRead(BATT_VOLT);
   current = analogRead(BATT_CURR_CH) - analogRead(BATT_CURR_DIS); // positive means batt charging, negative means batt discharging
   
-  
-  
   //find soc
-  switch(ch_state) {
-    case INIT:
-      // TODO: put in ryan code 
-      break;
-    case DISCHARGE:
-      soc = disch_calc_soc(voltage, a, b, c);
-      break;
-    case CHARGE:
-      soc = charge_soc_estim_eq(dod_prev, current, delta_t, cap); //define delta_t
-      break;
-  }
+  find_soc();
+  
   //TODO: control charge state
 
   //update battery soh
   
   //show battery soc through LEDs
-  LED_indicator(soc, RED20, GREEN40, GREEN60, GREEN80);
+  LED_indicator();
 }
