@@ -27,11 +27,12 @@
 | FAULT_LED – yellow LED (batt indicator) | DO9(?) | 8 |
 | BATT_VOLT - voltmeter (autocutoff) | AIN1 | A0 |
 | BATT_CURR - current sensor (bidirectional) | AIN2 | A1 |
-| BATT_HYDR - hydrogen sensor (batt soh monitor) | AIN3 | A3 |
+| BATT_TEMP - is actually analogue | DIN3 | A2 |
+| BATT_HYDR - hydrogen sensor (monitors for battery fault) | AIN3 | A3 |
 | MAINS_MONITOR - monitors mains voltage | DIN1 | 2 | <-- uses pin 2 for hardware interrupt
 | LIGHT_SW - light switch input | DIN2 | 3 | <-- uses pin 3 for hardware interrupt
 | LIGHT_OUT - controls lamp output | -- | 11 | 
-| BATT_TEMP | DIN3 | 9 |
+
 
 May add input and output pins for an extra relay (kill switch for battery)
 
