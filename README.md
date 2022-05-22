@@ -32,6 +32,7 @@
 | MAINS_MONITOR - monitors mains voltage | DIN1 | 2 | <-- uses pin 2 for hardware interrupt
 | LIGHT_SW - light switch input | DIN2 | 3 | <-- uses pin 3 for hardware interrupt
 | LIGHT_OUT - controls lamp output | -- | 11 | 
+| CUTOFF - controls cutoff relay | -- | 12 |
 
 
 May add input and output pins for an extra relay (kill switch for battery)
