@@ -26,13 +26,12 @@
 | GREEN80 – green LED (batt indicator) | DO7  | 7 |
 | FAULT_LED – yellow LED (batt indicator) | DO9(?) | 8 |
 | BATT_VOLT - voltmeter (autocutoff) | AIN1 | A0 |
-| BATT_CURR_CH - current sensor (charger > battery) | AIN2 | A1 |
-| BATT_CURR_DIS - current sensor (battery > lighting) | -- | A2 |
+| BATT_CURR - current sensor (bidirectional) | AIN2 | A1 |
 | BATT_HYDR - hydrogen sensor (batt soh monitor) | AIN3 | A3 |
 | MAINS_MONITOR - monitors mains voltage | DIN1 | 2 | <-- uses pin 2 for hardware interrupt
-| LIGHT_SW - turns lights on/off | DIN2 | 3 | <-- uses pin 3 for hardware interrupt
+| LIGHT_SW - light switch input | DIN2 | 3 | <-- uses pin 3 for hardware interrupt
+| LIGHT_OUT - controls lamp output | -- | 11 | 
 | BATT_TEMP | DIN3 | 9 |
 
-May add an output pin for controlling the lamp.
 May add input and output pins for an extra relay (kill switch for battery)
 
