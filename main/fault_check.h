@@ -32,5 +32,16 @@ void fault_check() {
     fault_state.overheat = false;
   }
 
+  if (volt < min_volt) {
+    fault-state.discharged = true;
+    Serial.begin(9600);
+    Serial.print("Fault: discharged battery. Current voltage is ");
+    Serial.print(volt);
+    Serial.println(); 
+    Serial.end();
+  } else {
+    fault_state.discharged = false;
+  }
+
   fault_state.no_fault = !(fault_state.overheat & fault_state.hydrogen & fault_state.overcurrent);
 }

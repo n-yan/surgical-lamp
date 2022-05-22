@@ -9,6 +9,7 @@ struct fault_states{
   bool overheat;
   bool hydrogen;
   bool overcurrent;
+  bool discharged;
 } fault_state;
 
 enum charge_states{
@@ -22,6 +23,7 @@ volatile bool mains_on, lights_on;
 
 //PIN SETUP
 #define POW_CONTROL 10
+#define CUTOFF 12
 
 #define RED20 4
 #define GREEN40 5
@@ -44,13 +46,11 @@ volatile bool mains_on, lights_on;
 // analogue -> int (need to be scaled)
 int volt_raw, curr_raw, temp_raw, hydr_raw; 
 double volt, curr, temp, hydr;
-double over_curr, over_temp, over_hydr; //TODO: assign values 
+double over_curr, over_temp, over_hydr, min_volt; //TODO: assign values 
 
 double soc;
 
 void setup() {
-  pinMode(POW_CONTROL, OUTPUT);
-  
   pinMode(RED20, OUTPUT);
   pinMode(GREEN40, OUTPUT);
   pinMode(GREEN60, OUTPUT);
@@ -62,6 +62,7 @@ void setup() {
   pinMode(BATT_HYDR, INPUT);
   pinMode(BATT_TEMP, INPUT);
 
+  pinMode(POW_CONTROL, OUTPUT);
   pinMode(MAINS_MONITOR, INPUT);
   attachInterrupt(digitalPinToInterrupt(MAINS_MONITOR), mains_off, FALLING);
   attachInterrupt(digitalPinToInterrupt(MAINS_MONITOR), mains_on, RISING);
@@ -69,11 +70,13 @@ void setup() {
   pinMode(LIGHT_OUT, OUTPUT);
   pinMode(LIGHT_SW, INPUT);
   attachInterrupt(digitalPinToInterrupt(LIGHT_SW), lamp_toggle, CHANGE); //assuming toggle switch. change to RISING/FALLING if push button
-  
+
+  pinMode(CUTOFF, OUTPUT);
   
 
   //initialise
 
+  //power on autocutoff relay initially
   //check mains
   //set light off
   //check faults
@@ -96,7 +99,7 @@ void loop() {
   
     //update power/mains based on present state
     if (mains_on) {
-      
+      digitalWrite(POW_CONTROL, HIGH);
     }
   
     //find soc
@@ -104,7 +107,7 @@ void loop() {
     
     //TODO: control charge state
   
-    //update battery soh
+    //update battery soh (if we get to it)
 
   } else {
     //what to do when there is a fault?
