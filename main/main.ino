@@ -4,8 +4,6 @@
 #include "power_interrupts.h"
 
 //STATE DECLARATIONS
-bool mains_on, lights_on;
-
 struct fault_states{
   bool no_fault;
   bool overheat;
@@ -19,6 +17,9 @@ enum charge_states{
   DISCHARGE
 } charge_state;
 
+// set by digital interrupt pins -> HIGH/LOW -> convert to bool.
+volatile bool mains_on, lights_on;
+
 //PIN SETUP
 #define POW_CONTROL 10
 
@@ -28,17 +29,24 @@ enum charge_states{
 #define GREEN80 7
 #define FAULT_LED 8
 
+//inputs
 #define BATT_VOLT A0
-#define BATT_CURR_CH A1
-#define BATT_CURR_DIS A2
+#define BATT_CURR A1
+#define BATT_TEMP A2
 #define BATT_HYDR A3
 
 #define MAINS_MONITOR 2 //able to use hw interrupt
 #define LIGHT_SW 3 //able to use hw interrupt
-#define BATT_TEMP 9
+
+#define LIGHT_OUT 11
 
 //SENSOR VARIABLE DECLARATIONS
-double voltage, current;
+// analogue -> int (need to be scaled)
+int volt_raw, curr_raw, temp_raw, hydr_raw; 
+double volt, curr, temp, hydr;
+double over_curr, over_temp, over_hydr; //TODO: assign values 
+
+double soc;
 
 void setup() {
   pinMode(POW_CONTROL, OUTPUT);
@@ -50,18 +58,19 @@ void setup() {
   pinMode(FAULT_LED, OUTPUT);
 
   pinMode(BATT_VOLT, INPUT);
-  pinMode(BATT_CURR_CH, INPUT);
-  pinMode(BATT_CURR_DIS, INPUT);
+  pinMode(BATT_CURR, INPUT);
   pinMode(BATT_HYDR, INPUT);
+  pinMode(BATT_TEMP, INPUT);
 
   pinMode(MAINS_MONITOR, INPUT);
   attachInterrupt(digitalPinToInterrupt(MAINS_MONITOR), mains_off, FALLING);
   attachInterrupt(digitalPinToInterrupt(MAINS_MONITOR), mains_on, RISING);
-  
+
+  pinMode(LIGHT_OUT, OUTPUT);
   pinMode(LIGHT_SW, INPUT);
   attachInterrupt(digitalPinToInterrupt(LIGHT_SW), lamp_toggle, CHANGE); //assuming toggle switch. change to RISING/FALLING if push button
   
-  pinMode(BATT_TEMP, INPUT);
+  
 
   //initialise
 
@@ -72,16 +81,34 @@ void setup() {
 }
 
 void loop() {
-  //update sensor values
-  voltage = analogRead(BATT_VOLT);
-  current = analogRead(BATT_CURR_CH) - analogRead(BATT_CURR_DIS); // positive means batt charging, negative means batt discharging
-  
-  //find soc
-  find_soc();
-  
-  //TODO: control charge state
+  //update sensor raw values
+  volt_raw = analogRead(BATT_VOLT);
+  curr_raw = analogRead(BATT_CURR); 
+  temp_raw = analogRead(BATT_TEMP);
+  hydr_raw = analogRead(BATT_HYDR);
 
-  //update battery soh
+  //scale sensor values. i.e. temp_raw -> temp (in degrees C)
+
+  //fault check. if you find a better way to do this (i.e. w/an interrupt?) replace
+  fault_check();
+  
+  if (fault_state.no_fault) {
+  
+    //update power/mains based on present state
+    if (mains_on) {
+      
+    }
+  
+    //find soc
+    find_soc();
+    
+    //TODO: control charge state
+  
+    //update battery soh
+
+  } else {
+    //what to do when there is a fault?
+  }
   
   //show battery soc through LEDs
   LED_indicator();
