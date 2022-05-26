@@ -5,6 +5,8 @@
 - Solve arduino power-up/boot-up time issue (flash Optiboot onto arduino for no-delay boot)
   - investigate further -> Optiboot v4.4 vs newest
   - bring in 2 arduinos (one of them to use as ISP)
+- Consider system states and triage them.
+  - Also, try figure out what state transitions require special considerations
 
 ## Lower priority TODO: 
 - LCD UI
