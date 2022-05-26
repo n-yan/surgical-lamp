@@ -1,13 +1,15 @@
 ## TODO:
 - sensor raw readings -> readable information (from datasheets or testing)
+  - test hydr and temp sensor
+  - get voltage divider info for voltage
 
-## What does the code need to do: 
-- Finish SOC updating
-- Find/control charge state (no longer complicated due to OTS charger)
+## Lower priority TODO: 
+- Solve arduino power-up/boot-up time issue (flash Optiboot onto arduino)
+  - investigate further
 - LCD UI
-- Battery initial setup (??)
 - Ryan discharge curve generation
 - Update battery soh 
+- Battery initial setup for a separate modular system (??)
 
 ## Done:
 - LED indication
@@ -19,25 +21,27 @@
 - Check if mains is on (DIN1 voltage sensor)> if off switch relay (d01) 
 - Current sensor (for soc etc) (ain2) 
 - Autocutoff? 
+- Finish SOC updating (convert to using global vars)
+- Find/control charge state (no longer complicated due to OTS charger)
 
 
 
 ## PIN MAPPINGS
 | Description | Overview pin | Arduino pin |
 | ------------- | ------------- | -------------- |
-| RED20 – red LED (batt indicator)  | DO4 | 4 |
-| GREEN40 – green LED (batt indicator)  | DO5 | 5 | 
-| GREEN60 – green LED (batt indicator) | DO6  | 6 | 
-| GREEN80 – green LED (batt indicator) | DO7  | 7 |
-| FAULT_LED – yellow LED (batt indicator) | DO9(?) | 8 |
+| RED20 – red LED (batt indicator)  **output** | DO4 | 4 |
+| GREEN40 – green LED (batt indicator) **output** | DO5 | 5 | 
+| GREEN60 – green LED (batt indicator)  **output** | DO6  | 6 | 
+| GREEN80 – green LED (batt indicator) **output** | DO7  | 7 |
+| FAULT_LED – yellow LED (batt indicator) **output** | DO9(?) | 8 |
 | -- | -- | -- |
-| BATT_VOLT - voltmeter (autocutoff) | AIN1 | A0 |
-| BATT_CURR - current sensor (bidirectional) | AIN2 | A1 |
-| BATT_TEMP - is actually analogue | DIN3 | A2 |
-| BATT_HYDR - hydrogen sensor (monitors for battery fault) | AIN3 | A3 |
+| BATT_VOLT - voltmeter (autocutoff) **input** | AIN1 | A0 |
+| BATT_CURR - current sensor (bidirectional) **input** | AIN2 | A1 |
+| BATT_TEMP - is actually analogue **input** | DIN3 | A2 |
+| BATT_HYDR - hydrogen sensor (monitors for battery fault) **input** | AIN3 | A3 |
 | -- | -- | -- |
-| MAINS_MONITOR - monitors mains voltage | DIN1 | 2 | <-- uses pin 2 for hardware interrupt
-| LIGHT_SW - light switch input | DIN2 | 3 | <-- uses pin 3 for hardware interrupt
-| LIGHT_OUT - controls lamp output | -- | 11 | 
-| POW_CONTROL - controls where lamp pulls power | DO1 | 10 |
-| CUTOFF - controls battery cutoff relay | -- | 12 |
+| MAINS_MONITOR - monitors mains voltage **input** | DIN1 | 2 | <-- uses pin 2 for hardware interrupt
+| LIGHT_SW - light switch **input** | DIN2 | 3 | <-- uses pin 3 for hardware interrupt
+| LIGHT_OUT - controls lamp **output** | -- | 11 | 
+| POW_CONTROL - controls where lamp pulls power **output** | DO1 | 10 |
+| CUTOFF - controls battery cutoff relay **output** | -- | 12 |
