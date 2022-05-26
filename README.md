@@ -27,7 +27,14 @@
 - Finish SOC updating (convert to using global vars)
 - Find/control charge state (no longer complicated due to OTS charger)
 
-
+## STATES
+- RELAY (AUTOCUTOFF) ON/OFF // BATTERY FAULT/NO FAULT
+- RELAY (MAINS/BATTERY) ON/OFF 
+- MAINS ON/OFF
+- BATTERY CHARGED/DISCHARGED
+- LIGHT ON/OFF
+- CALIBRATING/NOT CALIBRATING
+- CALIBRATED/NOT CALIBRATED
 
 ## PIN MAPPINGS
 | Description | Overview pin | Arduino pin |
