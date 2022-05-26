@@ -2,6 +2,7 @@
 #include "find_soc.h"
 #include "control_charge.h"
 #include "power_interrupts.h"
+#include "sensors.h"
 
 //STATE DECLARATIONS
 struct fault_states{
@@ -19,7 +20,8 @@ enum charge_states{
 } charge_state;
 
 // set by digital interrupt pins -> HIGH/LOW -> convert to bool.
-volatile bool mains_on, lights_on;
+// these variables aren't really used but keep for now. re-evaluate if needed
+volatile bool mains_on_state, lights_on_state;
 
 //PIN SETUP
 #define POW_CONTROL 10
@@ -46,9 +48,11 @@ volatile bool mains_on, lights_on;
 // analogue -> int (need to be scaled)
 int volt_raw, curr_raw, temp_raw, hydr_raw; 
 double volt, curr, temp, hydr;
-double over_curr, over_temp, over_hydr, min_volt; //TODO: assign values 
+double over_curr, over_temp, over_hydr, min_volt, max_volt, max_charge_volt; //TODO: assign values 
 
-double soc;
+//define dod somehow. probably from find_soc > init
+double soc, dod, cap;
+unsigned long prev_t = 0;
 
 void setup() {
   pinMode(RED20, OUTPUT);
@@ -69,50 +73,63 @@ void setup() {
 
   pinMode(LIGHT_OUT, OUTPUT);
   pinMode(LIGHT_SW, INPUT);
-  attachInterrupt(digitalPinToInterrupt(LIGHT_SW), lamp_toggle, CHANGE); //assuming toggle switch. change to RISING/FALLING if push button
+  attachInterrupt(digitalPinToInterrupt(LIGHT_SW), lamp_toggle, RISING); //assuming push button. change if toggle switch
 
   pinMode(CUTOFF, OUTPUT);
   
 
-  //initialise
-
-  //power on autocutoff relay initially
-  //check mains
-  //set light off
-  //check faults
+  //Initialising sequence
+  // power on autocutoff relay initially
+  // update sensor values
+  // check mains
+  // set light off
+  // set charge state to init
   
+  digitalWrite(CUTOFF, HIGH);
+  update_sensor_values();
+  if (digitalRead(MAINS_MONITOR) == ON) {
+    mains_on();
+  } else {
+    mains_off();
+  }
+
+  digitalWrite(LIGHT_OUT, LOW);
+
+  charge_state = INIT;
 }
 
 void loop() {
-  //update sensor raw values
-  volt_raw = analogRead(BATT_VOLT);
-  curr_raw = analogRead(BATT_CURR); 
-  temp_raw = analogRead(BATT_TEMP);
-  hydr_raw = analogRead(BATT_HYDR);
-
-  //scale sensor values. i.e. temp_raw -> temp (in degrees C)
 
   //fault check. if you find a better way to do this (i.e. w/an interrupt?) replace
   fault_check();
-  
+   
   if (fault_state.no_fault) {
-  
-    //update power/mains based on present state
-    if (mains_on) {
-      digitalWrite(POW_CONTROL, HIGH);
-    }
+    //turn cutoff relay on (battery is connected)
+    digitalWrite(CUTOFF, HIGH);
+
+    //turn fault indicating LED off
+    digitalWrite(FAULT_LED, LOW);
   
     //find soc
     find_soc();
     
-    //TODO: control charge state
+    //control charge state
+    control_charge();
   
     //update battery soh (if we get to it)
 
   } else {
-    //what to do when there is a fault?
+    //what to do when there is a battery fault?
+    //cutoff relay turned off (battery disconnected)
+    digitalWrite(CUTOFF, LOW);
+
+    //turn fault indicating LED on
+    digitalWrite(FAULT_LED, HIGH);
   }
   
   //show battery soc through LEDs
   LED_indicator();
+
+  //update sensor values
+  update_sensor_values();
 }

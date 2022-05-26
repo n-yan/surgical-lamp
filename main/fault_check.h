@@ -13,7 +13,7 @@ void fault_check() {
   if (hydr > over_hydr) {
     fault_state.hydrogen = true;
     Serial.begin(9600);
-    Serial.print("Fault: hydrogen detected. Amount detected is ");
+    Serial.print("Fault: hydrogen detected, battery is overcharged. Amount detected is ");
     Serial.print(hydr);
     Serial.println(); 
     Serial.end();
@@ -32,10 +32,10 @@ void fault_check() {
     fault_state.overheat = false;
   }
 
-  if (volt < min_volt) {
+  if (volt < min_volt || volt > max_volt) {
     fault-state.discharged = true;
     Serial.begin(9600);
-    Serial.print("Fault: discharged battery. Current voltage is ");
+    Serial.print("Fault: battery voltage out of safe operating range. Current voltage is ");
     Serial.print(volt);
     Serial.println(); 
     Serial.end();
