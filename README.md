@@ -37,9 +37,12 @@
 - CALIBRATED/NOT CALIBRATED
 
 ## PIN MAPPINGS
-The red/green/fault LED pin mappings will be replaced with LCD pins (6).
-Digital pins utilised: 11/14
-Analog pins utilised: 4/6
+The red/green/fault LED pin mappings will be replaced with LCD pins (6).  
+
+Digital pins utilised: 11/14  
+
+Analog pins utilised: 4/6  
+
 Note analog pins can be used as digital pins if needed.
 
 | Description | Overview pin | Arduino pin |
