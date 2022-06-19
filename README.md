@@ -1,12 +1,14 @@
 ## TODO:
+- Integrate LCD UI
+  - Update pin mappings, i.e. change LED digital output opins to LCD
+- Consider system states and triage them.
+  - Also, try figure out what state transitions require special considerations
 - sensor raw readings -> readable information (from datasheets or testing)
   - test hydr and temp sensor
   - get voltage divider info for voltage
 - Solve arduino power-up/boot-up time issue (flash Optiboot onto arduino for no-delay boot)
   - investigate further -> Optiboot v4.4 vs newest
   - bring in 2 arduinos (one of them to use as ISP)
-- Consider system states and triage them.
-  - Also, try figure out what state transitions require special considerations
 
 ## Lower priority TODO: 
 - LCD UI
@@ -53,8 +55,8 @@ Note analog pins can be used as digital pins if needed.
 | GREEN80 – green LED (batt indicator) **output** | DO7  | 7 |
 | FAULT_LED – yellow LED (batt indicator) **output** | DO9(?) | 8 |
 | -- | -- | -- |
-| BATT_VOLT - voltmeter (autocutoff) **input** | AIN1 | A0 |
-| BATT_CURR - current sensor (bidirectional) **input** | AIN2 | A1 |
+| BATT_VOLT - voltmeter (autocutoff) **input** | AIN2 | A0 |
+| BATT_CURR - current sensor (bidirectional) **input** | AIN1 | A1 |
 | BATT_TEMP - is actually analogue **input** | DIN3 | A2 |
 | BATT_HYDR - hydrogen sensor (monitors for battery fault) **input** | AIN3 | A3 |
 | -- | -- | -- |
