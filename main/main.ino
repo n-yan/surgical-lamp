@@ -24,11 +24,6 @@ struct fault_states{
   bool discharged;
 } fault_state;
 
-enum charge_states{
-  INIT, 
-  CHARGE, 
-  DISCHARGE
-} charge_state;
 
 /*   ***PIN SETUP***   */
 //UI
@@ -57,8 +52,8 @@ enum charge_states{
 
 //SENSOR VARIABLE DECLARATIONS
 // analogue -> int (need to be scaled)
-int volt_raw, curr_raw, temp_raw, hydr_raw; 
-double volt, curr, temp, hydr;
+int volt_raw, curr_raw, temp_raw, hydr_raw, lamp_curr_raw; 
+double volt, curr, temp, hydr, lam_curr;
 double over_curr, over_temp, over_hydr, min_volt, max_volt, max_charge_volt; //TODO: assign values 
 
 //define dod somehow. probably from find_soc > init
