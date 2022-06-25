@@ -1,8 +1,14 @@
 ## TODO:
+- Consider system states and triage them. > sort of done? for normal states
+  - Also, try figure out what state transitions require special considerations
+  - Start rewriting the code
+    - rewrite initialising sequence
+    - update finding soc
+    - add more logic
+    - change to LCD from LED UI
 - Integrate LCD UI
   - Update pin mappings, i.e. change LED digital output opins to LCD
-- Consider system states and triage them.
-  - Also, try figure out what state transitions require special considerations
+
 - sensor raw readings -> readable information (from datasheets or testing)
   - test hydr and temp sensor
   - get voltage divider info for voltage
@@ -17,6 +23,11 @@
 - Battery initial setup for a separate modular system (??)
 
 ## Done:
+- remove 2nd hw interrupt
+- updated fault check and control charge
+- update power interrupt
+- update pin mappings
+- create system boolean states
 - LED indication
 - Look at using interrrupts to integrate code after individual units are complete
 - Clean up code – segregate sections into different files? 
@@ -29,21 +40,23 @@
 - Finish SOC updating (convert to using global vars)
 - Find/control charge state (no longer complicated due to OTS charger)
 
-## STATES
-- RELAY (AUTOCUTOFF) ON/OFF // BATTERY FAULT/NO FAULT
-- RELAY (MAINS/BATTERY) ON/OFF 
-- MAINS ON/OFF
-- BATTERY CHARGED/DISCHARGED
-- LIGHT ON/OFF
-- CALIBRATING/NOT CALIBRATING
-- CALIBRATED/NOT CALIBRATED
+## SYSTEM BOOLEAN STATES
+| State name | Usual state | Description |
+| ------------- | ------------- | -------------- |
+| batt_fault | false | true if battery has a fault |
+| main_cx | true | true if mains is powering sys vs battery |
+| main_on | true | true if mains is on |
+| batt_chgd | true | true if battery is not fully discharged |
+| sys_fault | false | true if system/lamp has a fault |
+| calibrating | false | true if battery is calibrating |
+| calibrated | true | true if battery is calibrated |
 
 ## PIN MAPPINGS
 The red/green/fault LED pin mappings will be replaced with LCD pins (6).  
 
 Digital pins utilised: 11/14  
 
-Analog pins utilised: 4/6  
+Analog pins utilised: 5/6  
 
 Note analog pins can be used as digital pins if needed.
 
@@ -59,9 +72,12 @@ Note analog pins can be used as digital pins if needed.
 | BATT_CURR - current sensor (bidirectional) **input** | AIN1 | A1 |
 | BATT_TEMP - is actually analogue **input** | DIN3 | A2 |
 | BATT_HYDR - hydrogen sensor (monitors for battery fault) **input** | AIN3 | A3 |
+| LAMP_CURR - current sensor **input** | AIN4 | A4 |
 | -- | -- | -- |
 | MAINS_MONITOR - monitors mains voltage **input** | DIN1 | 2 | <-- uses pin 2 for hardware interrupt
-| LIGHT_SW - light switch **input** | DIN2 | 3 | <-- uses pin 3 for hardware interrupt
-| LIGHT_OUT - controls lamp **output** | -- | 11 | 
-| POW_CONTROL - controls where lamp pulls power **output** | DO1 | 10 |
-| CUTOFF - controls battery cutoff relay **output** | -- | 12 |
+| ? **input** | ? | 3 | <-- uses pin 3 for hardware interrupt
+| -- | -- | -- |
+| POW_CONTROL - controls where lamp pulls power **output** | D01/relay L | 10 |
+| SYS_CUTOFF - controls system/lamp cutoff relay **output** | relay M | 11 | 
+| BATT_CUTOFF - controls battery cutoff relay **output** | relay B | 12 |
+| CH_CUTOFF - controls if battery is charging from mains **output** | relay C | 13 | 
