@@ -44,4 +44,12 @@ void fault_check() {
   }
 
   fault_state.no_fault = !(fault_state.overheat & fault_state.hydrogen & fault_state.overcurrent);
+  states.batt_fault = fault_state.no_fault;
+
+  // lamp overcurrent check
+  if (lamp_curr > over_curr) {
+    states.sys_fault = true;
+  } else {
+    states.sys_fault = false;
+  }
 }

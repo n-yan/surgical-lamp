@@ -4,6 +4,7 @@ void update_sensor_values() {
   curr_raw = analogRead(BATT_CURR); 
   temp_raw = analogRead(BATT_TEMP);
   hydr_raw = analogRead(BATT_HYDR);
+  lamp_curr_raw = analogRead(LAMP_CURR);
 
   //scale sensor values. i.e. temp_raw -> temp (in degrees C). depends on datasheet/testing
   //arduino adc has a resolution of 10 bits. i.e. 1024 steps from 0-5V

@@ -1,8 +1,8 @@
 void control_charge {
-  if (mains_on) {
-    charge_state = CHARGE;
+  if (states.main_on) {
+    digitalWrite(CH_CONTROL, HIGH);
   } else {
-    charge_state = DISCHARGE;
+    digitalWrite(CH_CONTROL, LOW);
   }
 }
 

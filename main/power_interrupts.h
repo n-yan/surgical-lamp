@@ -1,6 +1,6 @@
 //turns mains off and switches to battery if there is no battery fault
 void mains_off(){
-  mains_on_state = false;
+  states.main_on = false;
   //if there is no fault, switch to battery
   if (fault_state.no_fault) {
     digitalWrite(POW_CONTROL, LOW);
@@ -10,17 +10,6 @@ void mains_off(){
 
 //turns mains on
 void mains_on() {
-  mains_on_state = true;
+  states.main_on = true;
   digitalWrite(POW_CONTROL, HIGH);
-}
-
-//toggles lamp state
-void lamp_toggle() {
-  lights_on_state = !lights_on_state;
-  if (lights_on_state) {
-    digitalWrite(LIGHT_OUT, HIGH);
-  } else {
-    digitalWrite(LIGHT_OUT, LOW);
-  }
-  
 }
