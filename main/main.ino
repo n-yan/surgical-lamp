@@ -50,15 +50,21 @@ struct fault_states{
 #define BATT_CUTOFF 12
 #define CH_CUTOFF 13
 
+//charge_state constants
+#define INIT 0
+#define DISCHARGE 1
+#define CHARGE 2
+
 //SENSOR VARIABLE DECLARATIONS
 // analogue -> int (need to be scaled)
 int volt_raw, curr_raw, temp_raw, hydr_raw, lamp_curr_raw; 
 double volt, curr, temp, hydr, lam_curr;
 double over_curr, over_temp, over_hydr, min_volt, max_volt, max_charge_volt; //TODO: assign values 
 
-//define dod somehow. probably from find_soc > init
+//define dod and soc somehow. probably from find_soc > init
 double soc, dod, cap;
 unsigned long prev_t = 0;
+int charge_state; //initialise charge_state
 
 void setup() {
   //UI pins
@@ -94,14 +100,14 @@ void setup() {
   pinMode(CH_CUTOFF, OUTPUT);
   
 
-  //Initialising sequence
+  //Initialising sequence - REWRITE WHOLE THING
   // power on autocutoff relay initially
   // update sensor values
   // check mains
   // set light off
   // set charge state to init
   
-  digitalWrite(CUTOFF, HIGH);
+  digitalWrite(CUTOFF, HIGH); //WHAT DOES THIS MEAN??
   update_sensor_values();
   if (digitalRead(MAINS_MONITOR) == ON) {
     mains_on();
@@ -109,6 +115,7 @@ void setup() {
     mains_off();
   }
 
+  //REMOVE THIS - CONTROLLED BY EXT SWITCH
   digitalWrite(LIGHT_OUT, LOW);
 
   charge_state = INIT;
