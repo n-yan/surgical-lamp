@@ -1,4 +1,5 @@
 ## TODO:
+- Thermistor and hydrogen sensor how to implement
 - Consider system states and triage them. > sort of done? for normal states
   - Also, try figure out what state transitions require special considerations
   - Start rewriting the code
