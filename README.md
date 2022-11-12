@@ -9,6 +9,7 @@
     - full integrated test
   - Convert current code to function? (headache)
   - Write black box tests validating logic - not in Arduino (headache)
+- Once code is clean put all into main_clean file (one big file for everything)
 - Consider system states and triage them. > sort of done? for normal states
   - Also, try figure out what state transitions require special considerations
   - Start rewriting the code
