@@ -6,6 +6,7 @@
     - combine above two
     - SoC tracking works
     - initialisation test
+    - Display/UI test
     - full integrated test
   - Convert current code to function? (headache)
   - Write black box tests validating logic - not in Arduino (headache)
