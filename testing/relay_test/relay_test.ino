@@ -1,4 +1,3 @@
-#include "../../main/power_interrupts.h"
 /*   ***STATE DECLARATIONS***   */
 struct sys_states {       // USUAL STATE  // DESCRIPTION
   bool batt_fault;        // false        // true if battery has a fault
@@ -8,7 +7,7 @@ struct sys_states {       // USUAL STATE  // DESCRIPTION
   bool sys_fault;         // false        // true if system/lamp has a fault
   bool calibrating;       // false        // true if battery is calibrating
   bool calibrated;        // true         // true if battery is calibrated
-} states;
+} states = {false, true, true, true, false, false, true}; //instantiates state at usual state
 
 struct fault_states{
   bool no_fault;
@@ -16,7 +15,7 @@ struct fault_states{
   bool hydrogen;
   bool overcurrent;
   bool discharged;
-} fault_state;
+} fault_state = {true, false, false, false, false};
 
 //hardware interrupts
 #define MAINS_MONITOR 2 //able to use hw interrupt
@@ -37,8 +36,8 @@ void setup() {
 
   //interrupt pins
   pinMode(MAINS_MONITOR, INPUT);
-  attachInterrupt(digitalPinToInterrupt(MAINS_MONITOR), mains_off, FALLING);
-  attachInterrupt(digitalPinToInterrupt(MAINS_MONITOR), mains_on, RISING);
+  //attachInterrupt(digitalPinToInterrupt(MAINS_MONITOR), mains_off, FALLING);
+  //attachInterrupt(digitalPinToInterrupt(MAINS_MONITOR), mains_on, RISING);
 
   //relay pins
   pinMode(POW_CONTROL, OUTPUT);
@@ -76,9 +75,6 @@ void relay_control() {
     //turn cutoff relay on (battery is connected)
     digitalWrite(BATT_CUTOFF, HIGH);
 
-    //turn fault indicating LED off
-      digitalWrite(FAULT_LED, LOW); 
-
     //control charging (updates relay CH_CUTOFF)
     control_charge();
 
@@ -86,10 +82,30 @@ void relay_control() {
     //what to do when there is a battery fault?
     //cutoff relay turned off (battery disconnected)
     digitalWrite(BATT_CUTOFF, LOW);
-
-    //turn fault indicating LED on
-    digitalWrite(FAULT_LED, HIGH);
   }
 
 }
+
+void control_charge() {
+  if (states.main_on) {
+    digitalWrite(CH_CUTOFF, HIGH);
+  } else {
+    digitalWrite(CH_CUTOFF, LOW);
+  }
+}
+
+//turns mains off and switches to battery if there is no battery fault
+void mains_off(){
+  states.main_on = false;
+  //if there is no fault, switch to battery
+  if (fault_state.no_fault) {
+    digitalWrite(POW_CONTROL, HIGH);
+  }
+  //if there is a fault, the system should already be turned off. (? check)
+}
+
+//turns mains on
+void mains_on() {
+  states.main_on = true;
+  digitalWrite(POW_CONTROL, LOW);
 }
