@@ -1,5 +1,14 @@
 ## TODO:
-- Thermistor and hydrogen sensor how to implement
+- Write testing code
+  - Write code testing physical functions
+    - relay switching at desired logic changes
+    - sensor behaviour as expected
+    - combine above two
+    - SoC tracking works
+    - initialisation test
+    - full integrated test
+  - Convert current code to function? (headache)
+  - Write black box tests validating logic - not in Arduino (headache)
 - Consider system states and triage them. > sort of done? for normal states
   - Also, try figure out what state transitions require special considerations
   - Start rewriting the code
@@ -24,6 +33,7 @@
 - Battery initial setup for a separate modular system (??)
 
 ## Done:
+- Thermistor and hydrogen sensor how to implement
 - remove 2nd hw interrupt
 - updated fault check and control charge
 - update power interrupt
