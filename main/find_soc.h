@@ -1,3 +1,6 @@
+
+
+
 // obtain constants and create SOC discharge curve, calculate SOC
 // voltage is obtained from voltage sensor
 void disch_calc_soc(double a, double b, double c) {
