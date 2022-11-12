@@ -87,12 +87,6 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(MAINS_MONITOR), mains_off, FALLING);
   attachInterrupt(digitalPinToInterrupt(MAINS_MONITOR), mains_on, RISING);
 
-/*
- * NEED TO DECIDE WHICH PINS/SENSOR INPUTS TO USE HW INTERRUPT
-  pinMode(SYS_MONITOR, OUTPUT);
-  pinMode(LIGHT_SW, INPUT);  // CHANGE THIS
-  attachInterrupt(digitalPinToInterrupt(LIGHT_SW), lamp_toggle, RISING);
-*/
   //relay pins
   pinMode(POW_CONTROL, OUTPUT);
   pinMode(SYS_CUTOFF, OUTPUT);

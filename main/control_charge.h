@@ -1,8 +1,8 @@
-void control_charge {
+void control_charge() {
   if (states.main_on) {
-    digitalWrite(CH_CONTROL, HIGH);
+    digitalWrite(CH_CUTOFF, HIGH);
   } else {
-    digitalWrite(CH_CONTROL, LOW);
+    digitalWrite(CH_CUTOFF, LOW);
   }
 }
 
