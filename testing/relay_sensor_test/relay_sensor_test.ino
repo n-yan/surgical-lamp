@@ -1,9 +1,3 @@
-#include "LED_indicator.h"
-#include "find_soc.h"
-#include "control_charge.h"
-#include "power_interrupts.h"
-#include "sensors.h"
-
 /*   ***STATE DECLARATIONS***   */
 struct sys_states {       // USUAL STATE  // DESCRIPTION
   bool batt_fault;        // false        // true if battery has a fault
@@ -26,13 +20,6 @@ struct fault_states{
 
 
 /*   ***PIN SETUP***   */
-//UI
-#define RED20 4
-#define GREEN40 5
-#define GREEN60 6
-#define GREEN80 7
-#define FAULT_LED 8
-
 //sensor inputs
 #define BATT_VOLT A0
 #define BATT_CURR A1
@@ -61,19 +48,7 @@ int volt_raw, curr_raw, temp_raw, hydr_raw, lamp_curr_raw;
 double volt, curr, temp, hydr, lam_curr;
 double over_curr, over_temp, over_hydr, min_volt, max_volt, max_charge_volt; //TODO: assign values 
 
-//define dod and soc somehow. probably from find_soc > init
-double soc, dod, cap;
-unsigned long prev_t = 0;
-int charge_state; //initialise charge_state
-
 void setup() {
-  //UI pins
-  pinMode(RED20, OUTPUT);
-  pinMode(GREEN40, OUTPUT);
-  pinMode(GREEN60, OUTPUT);
-  pinMode(GREEN80, OUTPUT);
-  pinMode(FAULT_LED, OUTPUT);
-
   //sensor pins
   pinMode(BATT_VOLT, INPUT);
   pinMode(BATT_CURR, INPUT);
@@ -92,31 +67,10 @@ void setup() {
   pinMode(SYS_CUTOFF, OUTPUT);
   pinMode(BATT_CUTOFF, OUTPUT);
   pinMode(CH_CUTOFF, OUTPUT);
-  
 
-  //Initialising sequence - REWRITE WHOLE THING
-  // power on autocutoff relay initially
-  // update sensor values
-  // check mains
-  // set light off
-  // set charge state to init
-  
-  digitalWrite(CUTOFF, HIGH); //WHAT DOES THIS MEAN??
-  update_sensor_values();
-  if (digitalRead(MAINS_MONITOR) == ON) {
-    mains_on();
-  } else {
-    mains_off();
-  }
-
-  //REMOVE THIS - CONTROLLED BY EXT SWITCH
-  //digitalWrite(LIGHT_OUT, LOW);
-
-  charge_state = INIT;
 }
 
 void loop() {
-
   //fault check. updates batt_fault and sys_fault states
   fault_check();
 
@@ -133,9 +87,6 @@ void loop() {
 
     //turn fault indicating LED off
     digitalWrite(FAULT_LED, LOW);
-
-    //find soc
-    find_soc();
     
     //control charging (updates relay CH_CUTOFF)
     control_charge();
@@ -150,10 +101,113 @@ void loop() {
     //turn fault indicating LED on
     digitalWrite(FAULT_LED, HIGH);
   }
-  
-  //show battery soc through LEDs
-  LED_indicator();
 
   //update sensor values
   update_sensor_values();
+
+}
+
+/**** RELAY CONTROL ****/
+void control_charge() {
+  if (states.main_on) {
+    digitalWrite(CH_CUTOFF, HIGH);
+  } else {
+    digitalWrite(CH_CUTOFF, LOW);
+  }
+}
+
+//turns mains off and switches to battery if there is no battery fault
+void mains_off(){
+  states.main_on = false;
+  //if there is no fault, switch to battery
+  if (fault_state.no_fault) {
+    digitalWrite(POW_CONTROL, HIGH);
+  }
+  //if there is a fault, the system should already be turned off. (? check)
+}
+
+//turns mains on
+void mains_on() {
+  states.main_on = true;
+  digitalWrite(POW_CONTROL, LOW);
+}
+
+/**** SENSOR FUNCTIONS ****/
+void fault_check() {
+  if (curr > over_curr) {
+    fault_state.overcurrent = true;
+    Serial.begin(9600);
+    Serial.print("Fault: overcurrent. Current is ");
+    Serial.print(curr);
+    Serial.println(); 
+    Serial.end();
+  } else {
+    fault_state.overcurrent = false;
+  }
+
+  if (hydr > over_hydr) {
+    fault_state.hydrogen = true;
+    Serial.begin(9600);
+    Serial.print("Fault: hydrogen detected, battery is overcharged. Amount detected is ");
+    Serial.print(hydr);
+    Serial.println(); 
+    Serial.end();
+  } else {
+    fault_state.hydrogen = false;
+  }
+
+  if (temp > over_temp) {
+    fault_state.overheat = true;
+    Serial.begin(9600);
+    Serial.print("Fault: overheating battery. Temperature is ");
+    Serial.print(temp);
+    Serial.println(); 
+    Serial.end();
+  } else {
+    fault_state.overheat = false;
+  }
+
+  if (volt < min_volt || volt > max_volt) {
+    fault-state.discharged = true;
+    Serial.begin(9600);
+    Serial.print("Fault: battery voltage out of safe operating range. Current voltage is ");
+    Serial.print(volt);
+    Serial.println(); 
+    Serial.end();
+  } else {
+    fault_state.discharged = false;
+  }
+
+  fault_state.no_fault = !(fault_state.overheat & fault_state.hydrogen & fault_state.overcurrent);
+  states.batt_fault = fault_state.no_fault;
+
+  // lamp overcurrent check
+  if (lamp_curr > over_curr) {
+    states.sys_fault = true;
+  } else {
+    states.sys_fault = false;
+  }
+}
+
+void update_sensor_values() {
+  //update sensor raw values
+  volt_raw = analogRead(BATT_VOLT);
+  curr_raw = analogRead(BATT_CURR); 
+  temp_raw = analogRead(BATT_TEMP);
+  hydr_raw = analogRead(BATT_HYDR);
+  lamp_curr_raw = analogRead(LAMP_CURR);
+
+  //scale sensor values. i.e. temp_raw -> temp (in degrees C). depends on datasheet/testing
+  //arduino adc has a resolution of 10 bits. i.e. 1024 steps from 0-5V
+
+  //voltage <- voltage divider. scale according to resistors
+  
+  //curr sensor range -37.5A to 37.5A <- change if sensor changes
+  curr = curr_raw * 75 * 5/1024 - 75; 
+
+  //temp sensor is thermistor. 
+
+  //hydr sensor <- conductivity rises with increase in combustible gas -> voltage over load resistor rises
+  //how to scale????????????????????
+  
 }
