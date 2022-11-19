@@ -1,3 +1,18 @@
+## Sensor notes:
+- battery
+  - 12.94V -> 815
+  - min voltage -> set as 10V
+  - max voltage -> set as 15V
+- mains
+  - same scaling as battery
+  - 180k, 60k voltage divider 
+  - HW interrupt set as pin 3 (need to connect current analog pin to digital (physically))
+- batt current
+  - 0A in either direction -> ~ 722 (2.87V)
+  
+##Showcase
+- Light on -> mains off -> switch to battery -> light continues to be on
+
 ## TODO:
 - Write testing code
   - Write code testing physical functions
