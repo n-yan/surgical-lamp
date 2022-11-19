@@ -46,8 +46,7 @@
 
 // initialize the library by associating any needed LCD interface pin
 // with the arduino pin number it is connected to
-const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2, A = 7, B = 6 ;
-
+const int rs = 12, en = 11, d4 = 4, d5 = 5, d6 = 6, d7 = 7, A = 8, B = 9 ;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 void setup() {
@@ -59,6 +58,13 @@ void setup() {
   lcd.print("Battery Lvl 100%");
   lcd.setCursor(0, 1);
   lcd.print("A cal | B OFF");
+
+  pinMode(0,OUTPUT);
+  pinMode(1,OUTPUT);
+  pinMode(2,OUTPUT);
+  digitalWrite(0,LOW);
+  digitalWrite(0,LOW);
+  digitalWrite(0,LOW);
 }
 
 void loop() {
