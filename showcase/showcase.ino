@@ -15,7 +15,9 @@ double volt;
 #include <LiquidCrystal.h>
 // initialize the library by associating any needed LCD interface pin
 // with the arduino pin number it is connected to
-const int rs = 12, en = 11, d4 = 4, d5 = 5, d6 = 6, d7 = 7, A = 8, B = 9 ;
+// pins R -> L. Last 3 pins are Vcc, Gnd and fault LED respectively
+const int rs = 12, en = 11, d4 = 4, d5 = 5, d6 = 6, d7 = 7, A = 8, B = 9;
+#define FAULT_LED 10
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 void setup() {
@@ -48,9 +50,12 @@ void setup() {
   // set up the LCD's number of columns and rows:
   lcd.begin(16, 2);
   // Print a message to the LCD.
-  lcd.print("Battery Lvl 100%");
+  lcd.print("Battery Lvl __%");
   lcd.setCursor(0, 1);
   lcd.print("A cal | B OFF");
+
+  pinMode(FAULT_LED, OUTPUT);
+  digitalWrite(FAULT_LED, HIGH);
 
 }
 
