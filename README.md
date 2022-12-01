@@ -1,3 +1,7 @@
+### Uninterruptible Surgical Lamp Project
+## Brief
+The files contained within this GitHub repo provide a summary of the work conducted to program the Arduino micocontroller at the heart of the USL's function. The structure is as follows:
+**Testing** contains the protocols to be followed for ensuring the lamp functionality is correct. 
 ## Sensor notes:
 - battery
   - 12.94V -> 815
